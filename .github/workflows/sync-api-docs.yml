@@ -12,13 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout api-docs repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           path: api-docs
 
       - name: Checkout API repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: jurono/api  # Replace with actual API repo
           token: ${{ secrets.API_REPO_TOKEN }}
