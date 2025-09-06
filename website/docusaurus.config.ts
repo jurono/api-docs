@@ -43,26 +43,10 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/jurono/api-docs/edit/main/website/',
         },
-        blog: {
-          showReadingTime: true,
-          feedOptions: {
-            type: ['rss', 'atom'],
-            xslt: true,
-          },
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-          // Useful options to enforce blogging best practices
-          onInlineTags: 'warn',
-          onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn',
-        },
+        blog: false, // Disable blog functionality
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -74,21 +58,26 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'My Site',
+      title: 'Jurono API',
       logo: {
-        alt: 'My Site Logo',
+        alt: 'Jurono Logo',
         src: 'img/logo.svg',
       },
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          sidebarId: 'apiSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Documentation',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: '/api-docs/openapi.yaml',
+          label: 'OpenAPI Spec',
+          position: 'left',
+          target: '_blank',
+        },
+        {
+          href: 'https://github.com/jurono/api-docs',
           label: 'GitHub',
           position: 'right',
         },
@@ -98,46 +87,52 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: 'Documentation',
           items: [
             {
-              label: 'Tutorial',
+              label: 'Getting Started',
               to: '/docs/intro',
             },
-          ],
-        },
-        {
-          title: 'Community',
-          items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              label: 'API Reference',
+              to: '/docs/api-reference',
             },
             {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'X',
-              href: 'https://x.com/docusaurus',
+              label: 'Code Examples',
+              to: '/docs/examples/',
             },
           ],
         },
         {
-          title: 'More',
+          title: 'API Resources',
           items: [
             {
-              label: 'Blog',
-              to: '/blog',
+              label: 'OpenAPI Specification',
+              href: '/api-docs/openapi.yaml',
+              target: '_blank',
             },
             {
-              label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              label: 'Postman Collection',
+              href: '/api-docs/postman/Jurono.postman_collection.json',
+              target: '_blank',
+            },
+          ],
+        },
+        {
+          title: 'Support',
+          items: [
+            {
+              label: 'GitHub Issues',
+              href: 'https://github.com/jurono/api-docs/issues',
+            },
+            {
+              label: 'API Repository',
+              href: 'https://github.com/jurono/api',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Jurono. API Documentation.`,
     },
     prism: {
       theme: prismThemes.github,

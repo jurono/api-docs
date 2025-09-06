@@ -49,7 +49,7 @@ print(response.json())
 
 We provide a comprehensive Postman collection with all API endpoints. You can import it from:
 
-- [Jurono.postman_collection.json](/postman/Jurono.postman_collection.json)
+- <a href="/api-docs/postman/Jurono.postman_collection.json" target="_blank">Jurono.postman_collection.json</a>
 
 The collection includes:
 - Pre-configured environment variables
