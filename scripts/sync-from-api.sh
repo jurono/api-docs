@@ -3,16 +3,27 @@ set -e
 
 # Configuration
 API_DIR="../api"
+API_REPO_URL="git@github_jurono:api.git"
 DOCS_DIR="."
 API_DOCS_DIR="$API_DIR/public/docs"
 
 echo "🚀 Syncing API documentation from $API_DIR..."
 
-# Check if API directory exists
+# Check if API directory exists, clone if not
 if [ ! -d "$API_DIR" ]; then
-    echo "❌ API directory not found at $API_DIR"
-    echo "Please ensure the API project is located at ../api relative to this script"
-    exit 1
+    echo "📥 API directory not found at $API_DIR"
+    echo "Cloning API repository..."
+    git clone "$API_REPO_URL" "$API_DIR"
+    if [ $? -ne 0 ]; then
+        echo "❌ Failed to clone API repository"
+        echo "Make sure you have access to $API_REPO_URL"
+        exit 1
+    fi
+else
+    echo "📁 API directory found, pulling latest changes..."
+    cd "$API_DIR"
+    git pull
+    cd - > /dev/null
 fi
 
 # Generate fresh OpenAPI specs in the API project

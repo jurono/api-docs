@@ -1,0 +1,26 @@
+[user]
+	name = Jurono Devops
+	email = devops@jurono.eu
+
+[core]
+	sshCommand = ssh -i ~/.ssh/id_jurono
+
+[url "git@github_jurono:"]
+	insteadOf = git@github.com:jurono/
+
+[push]
+	default = current
+	autoSetupRemote = true
+
+[branch]
+	autosetupmerge = always
+	autosetuprebase = always
+
+[alias]
+	# API docs specific aliases
+	sync-docs = "!./scripts/sync-from-api.sh"
+	validate-docs = "!npm run validate"
+	build-docs = "!cd website && npm run build"
+	serve-docs = "!cd website && npm start"
+	quick-commit = "!f() { git add . && git commit -m \"$1\"; }; f"
+	sync-and-commit = "!./scripts/sync-from-api.sh && git add . && git commit -m 'sync: update API documentation'"

@@ -7,6 +7,10 @@ on:
   repository_dispatch:
     types: [api-docs-updated]
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   sync-docs:
     runs-on: ubuntu-latest
@@ -14,13 +18,13 @@ jobs:
       - name: Checkout api-docs repo
         uses: actions/checkout@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.API_REPO_TOKEN }}
           path: api-docs
 
       - name: Checkout API repo
         uses: actions/checkout@v5
         with:
-          repository: jurono/api  # Replace with actual API repo
+          repository: jurono/api  # Private API repository
           token: ${{ secrets.API_REPO_TOKEN }}
           path: api
 
@@ -105,7 +109,7 @@ jobs:
           cd api-docs
           git add .
           git commit -m "sync: update API documentation from main API repo"
-          git push
+          git push origin main
 
       - name: Create PR for major changes
         if: steps.changes.outputs.changes == 'true'
