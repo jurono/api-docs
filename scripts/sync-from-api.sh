@@ -44,6 +44,12 @@ echo "📋 Copying OpenAPI specifications..."
 cp "$API_DOCS_DIR/openapi-public.yaml" "$DOCS_DIR/openapi/openapi.yaml"
 cp "$API_DOCS_DIR/openapi-public.json" "$DOCS_DIR/openapi/openapi.json"
 
+# Copy to website static directory for redocusaurus
+echo "📋 Copying to website static directory..."
+mkdir -p "$DOCS_DIR/website/static"
+cp "$API_DOCS_DIR/openapi-public.yaml" "$DOCS_DIR/website/static/openapi.yaml"
+cp "$API_DOCS_DIR/openapi-public.json" "$DOCS_DIR/website/static/openapi.json"
+
 # Copy metadata if available
 if [ -f "$API_DOCS_DIR/metadata.json" ]; then
     cp "$API_DOCS_DIR/metadata.json" "$DOCS_DIR/openapi/metadata.json"

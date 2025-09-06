@@ -52,6 +52,20 @@ const config: Config = {
         },
       } satisfies Preset.Options,
     ],
+    [
+      'redocusaurus',
+      {
+        specs: [
+          {
+            spec: 'static/openapi.yaml',
+            route: '/api/',
+          },
+        ],
+        theme: {
+          primaryColor: '#1890ff',
+        },
+      },
+    ],
   ],
 
   themeConfig: {
@@ -69,6 +83,11 @@ const config: Config = {
           sidebarId: 'apiSidebar',
           position: 'left',
           label: 'Documentation',
+        },
+        {
+          to: '/api/',
+          label: 'API Reference',
+          position: 'left',
         },
         {
           href: '/api-docs/openapi.yaml',
@@ -95,7 +114,7 @@ const config: Config = {
             },
             {
               label: 'API Reference',
-              to: '/docs/api-reference',
+              to: '/api/',
             },
             {
               label: 'Code Examples',

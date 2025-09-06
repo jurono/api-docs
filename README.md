@@ -11,4 +11,4 @@ curl -H "Authorization: Bearer <TOKEN>" https://sandbox.api.jurono.eu/v1/health
 
 See `openapi/openapi.yaml` and `guides/*` for details.
 <!-- Auto-generated sync info -->
-Last synced: 2025-09-06 03:16:25 UTC
+Last synced: 2025-09-06 05:34:41 UTC

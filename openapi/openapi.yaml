@@ -63,100 +63,112 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: JWT Bearer token obtained from /api/auth/login
-  parameters:
-    organizationId:
-      name: organizationId
-      in: path
-      required: true
-      description: UUID of the organization
-      schema:
-        type: string
-        format: uuid
-    userId:
-      name: userId
-      in: path
-      required: true
-      description: UUID of the user
-      schema:
-        type: string
-        format: uuid
-    page:
-      name: page
-      in: query
-      description: Page number for pagination (1-based)
-      schema:
-        type: integer
-        minimum: 1
-        default: 1
-    limit:
-      name: limit
-      in: query
-      description: Number of items per page
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 20
-    search:
-      name: search
-      in: query
-      description: Search term for filtering results
-      schema:
-        type: string
-        minLength: 1
-  responses:
-    ValidationError:
-      description: Validation error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ValidationError'
-    Unauthorized:
-      description: Authentication required
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: UNAUTHORIZED
-            message: Authentication required. Please provide a valid JWT token.
-    Forbidden:
-      description: Insufficient permissions
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: FORBIDDEN
-            message: You do not have permission to perform this action.
-    NotFound:
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: NOT_FOUND
-            message: The requested resource was not found.
-    InternalServerError:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: INTERNAL_SERVER_ERROR
-            message: An unexpected error occurred. Please try again later.
-    TooManyRequests:
-      description: Rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: RATE_LIMIT_EXCEEDED
-            message: Too many requests. Please try again later.
   schemas:
+    ApiToken:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum:
+            - SERVICE
+            - USER
+            - WEBHOOK
+            - INTERNAL
+            - TEMP
+        scopes:
+          type: array
+          items:
+            type: string
+        isActive:
+          type: boolean
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+        lastUsedAt:
+          type: string
+          format: date-time
+          nullable: true
+        usageCount:
+          type: integer
+        rateLimit:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        creator:
+          type: object
+          properties:
+            id:
+              type: string
+            email:
+              type: string
+            firstName:
+              type: string
+            lastName:
+              type: string
+    Error:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: VALIDATION_ERROR
+        message:
+          type: string
+          description: Human-readable error message
+          example: The provided email address is invalid.
+        details:
+          type: object
+          description: Additional error details
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+          example: '2024-08-16T14:30:00Z'
+        path:
+          type: string
+          description: API endpoint path
+          example: /api/users
+    ValidationError:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          enum:
+            - VALIDATION_ERROR
+          description: Error code
+        message:
+          type: string
+          description: Validation error message
+        field:
+          type: string
+          description: Field that failed validation
+          example: email
+        value:
+          type: string
+          description: Invalid value that was provided
+          example: invalid-email
+        validationRules:
+          type: array
+          items:
+            type: string
+          description: List of validation rules that failed
+          example:
+            - must be a valid email address
     LoginRequest:
       type: object
       required:
@@ -206,7 +218,6 @@ components:
         password:
           type: string
           minLength: 8
-          pattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]
           description: Password with minimum 8 characters, including uppercase, lowercase, number, and special character
           example: SecurePass123!
         firstName:
@@ -223,7 +234,6 @@ components:
           example: Doe
         phone:
           type: string
-          pattern: ^\+?[1-9]\d{1,14}$
           description: Phone number in international format
           example: '+49123456789'
         userType:
@@ -240,32 +250,6 @@ components:
           maxLength: 200
           description: Law firm name (required for LAWYER type)
           example: Doe & Associates Law Firm
-    PasswordResetRequest:
-      type: object
-      required:
-        - email
-      properties:
-        email:
-          type: string
-          format: email
-          description: Email address for password reset
-          example: user@example.com
-    PasswordResetConfirm:
-      type: object
-      required:
-        - token
-        - newPassword
-      properties:
-        token:
-          type: string
-          description: Password reset token received via email
-          example: prt_1234567890abcdef
-        newPassword:
-          type: string
-          minLength: 8
-          pattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]
-          description: New password meeting complexity requirements
-          example: NewSecurePass123!
     User:
       type: object
       properties:
@@ -346,7 +330,6 @@ components:
           example: user@example.com
         phone:
           type: string
-          pattern: ^\+?[1-9]\d{1,14}$
           description: Phone number in international format
           example: '+49123456789'
         locale:
@@ -422,198 +405,6 @@ components:
         updatedAt:
           type: string
           format: date-time
-    ComplianceCheck:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        type:
-          type: string
-          enum:
-            - GDPR_DATA_RETENTION
-            - GDPR_RIGHT_TO_ACCESS
-            - GDPR_RIGHT_TO_DELETION
-            - ACCESS_CONTROL
-            - CUSTOM
-        status:
-          type: string
-          enum:
-            - PENDING
-            - RUNNING
-            - COMPLETED
-            - FAILED
-            - SCHEDULED
-        description:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        lastRunAt:
-          type: string
-          format: date-time
-          nullable: true
-        nextRunAt:
-          type: string
-          format: date-time
-          nullable: true
-        results:
-          type: object
-          nullable: true
-    DataExportRequest:
-      type: object
-      required:
-        - type
-      properties:
-        type:
-          type: string
-          enum:
-            - USER_DATA
-            - ORGANIZATION_DATA
-            - MANDATE_DATA
-            - CLIENT_DATA
-            - COMPLETE_EXPORT
-            - ANONYMIZED_EXPORT
-        filters:
-          type: object
-    LawyerProfile:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: Unique lawyer profile identifier
-        firstName:
-          type: string
-          description: Lawyer first name
-          example: Dr. Maria
-        lastName:
-          type: string
-          description: Lawyer last name
-          example: Schmidt
-        email:
-          type: string
-          format: email
-          description: Lawyer email address
-          example: maria.schmidt@lawfirm.de
-        phone:
-          type: string
-          description: Lawyer phone number
-          example: '+49301234567'
-        specializations:
-          type: array
-          items:
-            type: string
-          description: Areas of legal specialization
-          example:
-            - Corporate Law
-            - Tax Law
-            - Commercial Law
-        city:
-          type: string
-          description: Lawyer location city
-          example: Berlin
-        region:
-          type: string
-          description: Lawyer location region/state
-          example: Berlin
-        country:
-          type: string
-          description: Lawyer location country
-          example: Germany
-        firmName:
-          type: string
-          description: Law firm name
-          example: Schmidt & Partners
-        website:
-          type: string
-          format: uri
-          description: Lawyer or firm website
-          example: https://schmidtpartners.de
-        yearsOfExperience:
-          type: integer
-          minimum: 0
-          description: Years of legal practice experience
-          example: 15
-        barNumber:
-          type: string
-          description: Bar association number
-          example: BAR12345
-        languages:
-          type: array
-          items:
-            type: string
-          description: Languages spoken
-          example:
-            - German
-            - English
-            - French
-        isVerified:
-          type: boolean
-          description: Whether lawyer profile is verified
-          example: true
-        createdAt:
-          type: string
-          format: date-time
-          description: Profile creation timestamp
-    LawyerSearchRequest:
-      type: object
-      properties:
-        query:
-          type: string
-          description: Search query for lawyer name or firm
-          example: Schmidt
-        specialization:
-          type: string
-          description: Legal specialization filter
-          example: Corporate Law
-        city:
-          type: string
-          description: City filter
-          example: Berlin
-        region:
-          type: string
-          description: Region/state filter
-          example: Berlin
-        minExperience:
-          type: integer
-          minimum: 0
-          description: Minimum years of experience
-          example: 5
-        language:
-          type: string
-          description: Language requirement
-          example: English
-        page:
-          type: integer
-          minimum: 1
-          default: 1
-          description: Page number for pagination
-        limit:
-          type: integer
-          minimum: 1
-          maximum: 50
-          default: 20
-          description: Number of results per page
-    LawyerSearchResponse:
-      type: object
-      properties:
-        lawyers:
-          type: array
-          items:
-            $ref: '#/components/schemas/LawyerProfile'
-        pagination:
-          $ref: '#/components/schemas/PaginationInfo'
-        totalCount:
-          type: integer
-          description: Total number of matching lawyers
-          example: 156
-        searchTime:
-          type: number
-          description: Search execution time in milliseconds
-          example: 45.6
     PaginationInfo:
       type: object
       properties:
@@ -641,344 +432,85 @@ components:
           type: boolean
           description: Whether there is a previous page
           example: false
-    OrganizationCreate:
-      type: object
-      required:
-        - name
-        - contactEmail
-      properties:
-        name:
-          type: string
-          minLength: 2
-          maxLength: 200
-          description: Organization name
-          example: Acme Law Firm
-        contactEmail:
-          type: string
-          format: email
-          description: Primary contact email
-          example: contact@acmelaw.com
-        phone:
-          type: string
-          description: Organization phone number
-          example: '+49301234567'
-        website:
-          type: string
-          format: uri
-          description: Organization website
-          example: https://acmelaw.com
-        address:
-          $ref: '#/components/schemas/Address'
-        plan:
-          type: string
-          enum:
-            - FREE
-            - PRO
-            - EXECUTIVE
-          default: FREE
-          description: Subscription plan
-        defaultLocale:
-          type: string
-          default: en-US
-          description: Default language locale
-          example: de-DE
-    OrganizationUpdate:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 2
-          maxLength: 200
-          description: Organization name
-        contactEmail:
-          type: string
-          format: email
-          description: Primary contact email
-        phone:
-          type: string
-          description: Organization phone number
-        website:
-          type: string
-          format: uri
-          description: Organization website
-        address:
-          $ref: '#/components/schemas/Address'
-        defaultLocale:
-          type: string
-          description: Default language locale
-    Address:
-      type: object
-      properties:
-        street:
-          type: string
-          description: Street address
-          example: Unter den Linden 1
-        city:
-          type: string
-          description: City
-          example: Berlin
-        postalCode:
-          type: string
-          description: Postal code
-          example: '10117'
-        region:
-          type: string
-          description: State or region
-          example: Berlin
-        country:
-          type: string
-          description: Country
-          example: Germany
-    Membership:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: Membership identifier
-        role:
-          type: string
-          enum:
-            - OWNER
-            - ADMIN
-            - LAWYER
-            - STAFF
-            - ACCOUNTANT
-            - CLIENT
-            - INVITED
-          description: User role in organization
-        status:
-          type: string
-          enum:
-            - ACTIVE
-            - PENDING
-            - SUSPENDED
-            - DEACTIVATED
-          description: Membership status
-        organizationId:
-          type: string
-          format: uuid
-          description: Organization identifier
-        userId:
-          type: string
-          format: uuid
-          description: User identifier
-        invitedBy:
-          type: string
-          format: uuid
-          nullable: true
-          description: User who sent the invitation
-        invitedAt:
-          type: string
-          format: date-time
-          nullable: true
-          description: Invitation timestamp
-        joinedAt:
-          type: string
-          format: date-time
-          nullable: true
-          description: Join timestamp
-        createdAt:
-          type: string
-          format: date-time
-          description: Creation timestamp
-    MembershipInvite:
-      type: object
-      required:
-        - email
-        - role
-      properties:
-        email:
-          type: string
-          format: email
-          description: Email address of person to invite
-          example: newmember@example.com
-        role:
-          type: string
-          enum:
-            - ADMIN
-            - LAWYER
-            - STAFF
-            - ACCOUNTANT
-            - CLIENT
-          description: Role to assign to new member
-          example: LAWYER
-        message:
-          type: string
-          maxLength: 500
-          description: Optional invitation message
-          example: Welcome to our law firm!
-    Error:
-      type: object
-      required:
-        - error
-        - message
-      properties:
-        error:
-          type: string
-          description: Error code
-          example: VALIDATION_ERROR
-        message:
-          type: string
-          description: Human-readable error message
-          example: The provided email address is invalid.
-        details:
-          type: object
-          description: Additional error details
-        timestamp:
-          type: string
-          format: date-time
-          description: Error timestamp
-          example: '2024-08-16T14:30:00Z'
-        path:
-          type: string
-          description: API endpoint path
-          example: /api/users
+  responses:
     ValidationError:
-      type: object
-      required:
-        - error
-        - message
-      properties:
-        error:
-          type: string
-          enum:
-            - VALIDATION_ERROR
-          description: Error code
-        message:
-          type: string
-          description: Validation error message
-        field:
-          type: string
-          description: Field that failed validation
-          example: email
-        value:
-          type: string
-          description: Invalid value that was provided
-          example: invalid-email
-        validationRules:
-          type: array
-          items:
-            type: string
-          description: List of validation rules that failed
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
           example:
-            - must be a valid email address
-    SuccessResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: true
-        message:
-          type: string
-          description: Success message
-          example: Operation completed successfully
-        data:
-          type: object
-          description: Response data
-        timestamp:
-          type: string
-          format: date-time
-          description: Response timestamp
-    ApiToken:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        description:
-          type: string
-        type:
-          type: string
-          enum:
-            - SERVICE
-            - USER
-            - WEBHOOK
-            - INTERNAL
-            - TEMP
-        scopes:
-          type: array
-          items:
-            type: string
-        isActive:
-          type: boolean
-        expiresAt:
-          type: string
-          format: date-time
-        lastUsedAt:
-          type: string
-          format: date-time
-        usageCount:
-          type: integer
-        rateLimit:
-          type: integer
-        createdAt:
-          type: string
-          format: date-time
-        creator:
-          type: object
-          properties:
-            id:
-              type: string
-            email:
-              type: string
-            firstName:
-              type: string
-            lastName:
-              type: string
+            error: UNAUTHORIZED
+            message: Authentication required. Please provide a valid JWT token.
+    Forbidden:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: FORBIDDEN
+            message: You do not have permission to perform this action.
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: NOT_FOUND
+            message: The requested resource was not found.
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: INTERNAL_SERVER_ERROR
+            message: An unexpected error occurred. Please try again later.
+    TooManyRequests:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: RATE_LIMIT_EXCEEDED
+            message: Too many requests. Please try again later.
 tags:
   - name: Authentication
     description: User authentication, registration, and session management
-    externalDocs:
-      description: Authentication Guide
-      url: https://docs.jurono.eu/authentication
   - name: Users
     description: User profile management and account operations
-    externalDocs:
-      description: User Management Guide
-      url: https://docs.jurono.eu/users
   - name: Organizations
     description: Multi-tenant organization management and settings
-    externalDocs:
-      description: Organization Management Guide
-      url: https://docs.jurono.eu/organizations
+  - name: Clients
+    description: Client profile and contact management
+  - name: Mandates
+    description: Legal mandate and case management
+  - name: Invoices
+    description: Invoice and billing management
   - name: JuroLib
     description: Lawyer directory search and profile management
-    externalDocs:
-      description: JuroLib Integration Guide
-      url: https://docs.jurono.eu/jurolib
   - name: Compliance
     description: GDPR compliance, data protection, and privacy controls
-    externalDocs:
-      description: Compliance & GDPR Guide
-      url: https://docs.jurono.eu/compliance
   - name: Analytics
     description: Performance metrics and business intelligence
-    externalDocs:
-      description: Analytics Guide
-      url: https://docs.jurono.eu/analytics
+  - name: Documents
+    description: Document management and file operations
   - name: Notifications
     description: Email notifications and communication management
-    externalDocs:
-      description: Notifications Guide
-      url: https://docs.jurono.eu/notifications
   - name: Search
     description: Advanced search capabilities across platform data
-    externalDocs:
-      description: Search Guide
-      url: https://docs.jurono.eu/search
-  - name: Billing
-    description: Subscription management and billing operations
-    externalDocs:
-      description: Billing Guide
-      url: https://docs.jurono.eu/billing
   - name: Performance
     description: System performance monitoring and health checks
-    externalDocs:
-      description: Performance Monitoring Guide
-      url: https://docs.jurono.eu/performance
 paths:
   /api/analytics/dashboard:
     get:

@@ -33,8 +33,7 @@
   "license": "MIT",
   "devDependencies": {
     "@stoplight/spectral-cli": "^6.11.0",
-    "newman": "^6.1.2",
-    "yq": "^0.0.3"
+    "newman": "^6.1.2"
   },
   "engines": {
     "node": ">=18.0.0"
