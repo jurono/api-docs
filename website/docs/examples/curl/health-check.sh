@@ -1,0 +1,1 @@
+curl -H "Authorization: Bearer $TOKEN" http://localhost:3001/v1/health

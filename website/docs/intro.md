@@ -2,46 +2,106 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Getting Started with the Jurono API
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Welcome to the **Jurono API Documentation**! This guide will help you get started with integrating the Jurono Legal Practice Management API into your applications.
 
-## Getting Started
+## API Overview
 
-Get started by **creating a new site**.
+The Jurono API is a comprehensive REST API that provides access to all core functionality of the Jurono Legal Practice Management Platform, including:
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+- **Authentication & User Management** - Secure user authentication, registration, and profile management
+- **Organization Management** - Multi-tenant organization operations and member management
+- **Legal Practice Tools** - Case management, client profiles, and legal workflows
+- **JuroLib Integration** - Lawyer directory search and profile management
+- **Document Management** - Secure document handling and version control
+- **Analytics & Reporting** - Performance metrics and business intelligence
 
-### What you'll need
+## Base URLs
 
-- [Node.js](https://nodejs.org/en/download/) version 18.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+- **Production**: `https://api.jurono.eu/v1`
+- **Sandbox**: `https://sandbox.api.jurono.eu/v1`
 
-## Generate a new site
+## Quick Start
 
-Generate a new Docusaurus site using the **classic template**.
+### 1. Authentication
 
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
+All API endpoints require authentication via JWT Bearer tokens:
 
 ```bash
-cd my-website
-npm run start
+curl -H "Authorization: Bearer <YOUR_TOKEN>" \
+  https://sandbox.api.jurono.eu/v1/health
 ```
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
+### 2. Get Your API Token
 
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
+Contact your system administrator or use the authentication endpoint:
 
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+```bash
+curl -X POST https://sandbox.api.jurono.eu/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "your-email@example.com",
+    "password": "your-password"
+  }'
+```
+
+### 3. Make Your First Request
+
+Test connectivity with the health endpoint:
+
+```bash
+curl -H "Authorization: Bearer <YOUR_TOKEN>" \
+  https://sandbox.api.jurono.eu/v1/health
+```
+
+Expected response:
+```json
+{
+  "status": "ok",
+  "version": "1.0.0",
+  "timestamp": "2025-09-06T03:16:25.000Z"
+}
+```
+
+## Rate Limiting
+
+The API implements rate limiting to ensure fair usage:
+
+- **Authentication endpoints**: 5 requests per minute
+- **General endpoints**: 100 requests per minute
+- **Analytics endpoints**: 20 requests per minute
+
+## Error Handling
+
+All errors follow a consistent format:
+
+```json
+{
+  "error": {
+    "code": "INVALID_REQUEST",
+    "message": "The request is invalid",
+    "details": {
+      "field": "email",
+      "issue": "Email address is required"
+    }
+  }
+}
+```
+
+## Next Steps
+
+- 📖 [**API Reference**](/docs/api-reference) - Complete API specification
+- 🔐 [**Authentication Guide**](/docs/guides/authentication) - Detailed authentication flow
+- 📄 [**Code Examples**](/docs/examples/) - Sample code in multiple languages
+- 📡 [**Webhooks**](/docs/guides/webhooks) - Real-time event notifications
+
+## Support
+
+- **Documentation Issues**: [GitHub Issues](https://github.com/jurono/api-docs/issues)
+- **API Support**: support@jurono.eu
+- **Security Issues**: security@jurono.eu
+
+---
+
+*This documentation is automatically synced from the main API repository and updated daily.*

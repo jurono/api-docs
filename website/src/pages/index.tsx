@@ -21,7 +21,13 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             to="/docs/intro">
-            Docusaurus Tutorial - 5min ⏱️
+            Get Started with the API →
+          </Link>
+          <Link
+            className="button button--outline button--secondary button--lg"
+            style={{marginLeft: '1rem'}}
+            to="/docs/api-reference">
+            API Reference
           </Link>
         </div>
       </div>
@@ -33,8 +39,8 @@ export default function Home(): ReactNode {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
+      title={`${siteConfig.title} - Developer Documentation`}
+      description="Complete REST API documentation for the Jurono Legal Practice Management Platform">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

@@ -1,5 +1,6 @@
 name: Build & Deploy Docs
 on:
+  workflow_dispatch:  # Allow manual trigger
   push:
     branches: [ main ]
     paths:
@@ -8,6 +9,7 @@ on:
       - "webhooks/**"
       - "website/**"
       - "README.md"
+      - ".github/workflows/build-docs.yml"
 permissions:
   contents: read
   pages: write
@@ -27,6 +29,10 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - id: deploy
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4

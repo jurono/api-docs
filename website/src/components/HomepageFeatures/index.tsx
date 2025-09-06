@@ -11,32 +11,32 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
+    title: 'Complete REST API',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Access 104+ public endpoints for legal practice management, including
+        authentication, organization management, case handling, and document processing.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: 'OpenAPI 3.0 Specification',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Industry-standard OpenAPI documentation with schemas, examples, and
+        comprehensive parameter definitions. Auto-generated from the main API codebase.
       </>
     ),
   },
   {
-    title: 'Powered by React',
+    title: 'Multi-Language Support',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Code examples in cURL, JavaScript, Python, and more. Auto-generated
+        SDKs for TypeScript with support for additional languages coming soon.
       </>
     ),
   },
