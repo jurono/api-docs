@@ -1,4 +1,6 @@
 name: Generate SDKs
+permissions:
+  contents: read
 on:
   workflow_dispatch:
   push:
