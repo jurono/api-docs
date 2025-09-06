@@ -1,0 +1,42 @@
+{
+  "name": "jurono-api-docs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Public API documentation for Jurono Legal Practice Management Platform",
+  "scripts": {
+    "sync": "scripts/sync-from-api.sh",
+    "sync:check": "scripts/sync-from-api.sh && npm run validate",
+    "validate": "spectral lint openapi/openapi.yaml",
+    "validate:install": "npm install -g @stoplight/spectral-cli",
+    "docs:dev": "cd website && npm start",
+    "docs:build": "cd website && npm run build",
+    "docs:serve": "cd website && npm run serve",
+    "setup": "npm run validate:install && cd website && npm install",
+    "clean": "rm -rf website/build website/.docusaurus",
+    "postman:validate": "newman run postman/Jurono.postman_collection.json --environment postman/environments/sandbox.json --reporters cli",
+    "examples:test": "scripts/test-examples.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jurono/api-docs.git"
+  },
+  "keywords": [
+    "api",
+    "documentation",
+    "openapi",
+    "swagger",
+    "jurono",
+    "legal",
+    "docs"
+  ],
+  "author": "Jurono <support@jurono.eu>",
+  "license": "MIT",
+  "devDependencies": {
+    "@stoplight/spectral-cli": "^6.11.0",
+    "newman": "^6.1.2",
+    "yq": "^0.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

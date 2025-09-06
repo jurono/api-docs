@@ -1,0 +1,27 @@
+name: Generate SDKs
+on:
+  workflow_dispatch:
+  push:
+    paths: [ "openapi/**" ]
+jobs:
+  gen-js:
+    if: contains('js', 'js')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm i -g @openapitools/openapi-generator-cli
+      - run: |
+          rm -rf sdks/js
+          openapi-generator-cli generate \
+            -i openapi/openapi.yaml \
+            -g typescript-fetch \
+            -o sdks/js \
+            --additional-properties=typescriptThreePlus=true
+      - run: |
+          cd sdks/js
+          npm init -y
+          npm version 0.0.1 --no-git-tag-version
+          echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc
+          npm publish --access public
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

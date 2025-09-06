@@ -1,0 +1,13 @@
+name: Validate OpenAPI
+on:
+  push:
+    paths: [ "openapi/**" ]
+  pull_request:
+    paths: [ "openapi/**" ]
+jobs:
+  spectral:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm i -g @stoplight/spectral-cli
+      - run: spectral lint openapi/openapi.yaml

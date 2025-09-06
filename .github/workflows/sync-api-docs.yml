@@ -1,0 +1,124 @@
+name: Sync API Documentation
+on:
+  workflow_dispatch:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  repository_dispatch:
+    types: [api-docs-updated]
+
+jobs:
+  sync-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout api-docs repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: api-docs
+
+      - name: Checkout API repo
+        uses: actions/checkout@v4
+        with:
+          repository: jurono/api  # Replace with actual API repo
+          token: ${{ secrets.API_REPO_TOKEN }}
+          path: api
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate fresh OpenAPI specs from API repo
+        run: |
+          cd api
+          npm ci
+          npm run docs:generate
+
+      - name: Copy OpenAPI specs to api-docs
+        run: |
+          # Copy the public API spec (this is what we want to document publicly)
+          cp api/public/docs/openapi-public.yaml api-docs/openapi/openapi.yaml
+          cp api/public/docs/openapi-public.json api-docs/openapi/openapi.json
+          
+          # Extract and organize components
+          cd api-docs
+          mkdir -p openapi/components/{schemas,examples,parameters,responses}
+
+      - name: Extract API components
+        run: |
+          cd api-docs
+          # Use yq to extract components from the main spec
+          npm install -g yq
+          
+          # Extract schemas
+          yq eval '.components.schemas // {}' openapi/openapi.yaml > openapi/components/schemas/all.yaml
+          
+          # Extract examples  
+          yq eval '.components.examples // {}' openapi/openapi.yaml > openapi/components/examples/all.yaml
+          
+          # Extract parameters
+          yq eval '.components.parameters // {}' openapi/openapi.yaml > openapi/components/parameters/all.yaml
+          
+          # Extract responses
+          yq eval '.components.responses // {}' openapi/openapi.yaml > openapi/components/responses/all.yaml
+
+      - name: Update documentation guides
+        run: |
+          cd api-docs
+          # Extract API metadata for guides
+          API_VERSION=$(yq eval '.info.version' openapi/openapi.yaml)
+          API_TITLE=$(yq eval '.info.title' openapi/openapi.yaml)
+          
+          # Update version in changelog
+          echo "# Changelog (v${API_VERSION})" > changelog/v1.md
+          echo "- Updated API specification" >> changelog/v1.md
+          echo "- Generated on $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> changelog/v1.md
+
+      - name: Generate new examples from OpenAPI spec
+        run: |
+          cd api-docs
+          # Extract server URLs for examples
+          SANDBOX_URL=$(yq eval '.servers[] | select(.description == "*andbox*" or .description == "*dev*") | .url' openapi/openapi.yaml | head -1)
+          PROD_URL=$(yq eval '.servers[] | select(.description == "*prod*" or .description == "*Production*") | .url' openapi/openapi.yaml | head -1)
+          
+          # Update example files with actual endpoints
+          echo "# Updated examples with real API endpoints" > examples/README.md
+          echo "Generated from OpenAPI spec on $(date)" >> examples/README.md
+
+      - name: Check for changes
+        id: changes
+        run: |
+          cd api-docs
+          git config --local user.email "action@github.com"
+          git config --local user.name "API Docs Sync"
+          
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.changes.outputs.changes == 'true'
+        run: |
+          cd api-docs
+          git add .
+          git commit -m "sync: update API documentation from main API repo"
+          git push
+
+      - name: Create PR for major changes
+        if: steps.changes.outputs.changes == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd api-docs
+          # Check if this is a major version change
+          OLD_VERSION=$(git show HEAD~1:openapi/openapi.yaml | yq eval '.info.version' -)
+          NEW_VERSION=$(yq eval '.info.version' openapi/openapi.yaml)
+          
+          if [[ "$OLD_VERSION" != "$NEW_VERSION" ]]; then
+            gh pr create --title "API Documentation Update: v$NEW_VERSION" \
+              --body "Automated sync of API documentation from main API repository. Version updated from $OLD_VERSION to $NEW_VERSION." \
+              --label "documentation,automated" || true
+          fi

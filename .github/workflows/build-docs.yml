@@ -1,0 +1,32 @@
+name: Build & Deploy Docs
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "openapi/**"
+      - "guides/**"
+      - "webhooks/**"
+      - "website/**"
+      - "README.md"
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: 
+          node-version: "20"
+      - run: cd website && npm ci && npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with: 
+          path: website/build
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
