@@ -1,30 +1,288 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * Custom CSS for Jurono API Documentation
+ * Matching the landing page branding and design system
  */
 
-/* You can override the default Infima variables here. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Jurono Brand Colors - matching landing page */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
+  /* Primary colors (purple/indigo) */
+  --ifm-color-primary: #5d63ff; /* rgb(93 99 255) */
+  --ifm-color-primary-dark: #4338ca; /* rgb(67 56 202) */
+  --ifm-color-primary-darker: #3730a3;
+  --ifm-color-primary-darkest: #312e81;
+  --ifm-color-primary-light: #8085ff;
+  --ifm-color-primary-lighter: #a5a9ff;
+  --ifm-color-primary-lightest: #c9cdff;
+
+  /* Secondary colors (blue) */
+  --ifm-color-secondary: #0080cc; /* rgb(0 128 204) */
+  --ifm-color-secondary-dark: #006bb3;
+  --ifm-color-secondary-darker: #004d80;
+  --ifm-color-secondary-darkest: #003366;
+
+  /* Background colors */
+  --ifm-background-color: #ffffff;
+  --ifm-background-surface-color: #f8fafc;
+
+  /* Typography */
+  --ifm-font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
+  --ifm-font-family-monospace: 'SFMono-Regular', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+
+  /* Code styling */
   --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --docusaurus-highlighted-code-line-bg: rgba(93, 99, 255, 0.1);
+
+  /* Navbar */
+  --ifm-navbar-background-color: #ffffff;
+  --ifm-navbar-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+
+  /* Footer */
+  --ifm-footer-background-color: #0f0d2a; /* rgb(15 13 42) - primary-950 */
+  --ifm-footer-color: #e5e7eb;
+  --ifm-footer-link-color: #d1d5db;
+  --ifm-footer-title-color: #ffffff;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
+/* Dark mode theme - matching landing page dark theme */
 [data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-color-primary: #8085ff; /* Lighter purple for dark mode */
+  --ifm-color-primary-dark: #5d63ff;
+  --ifm-color-primary-darker: #4338ca;
+  --ifm-color-primary-darkest: #3730a3;
+  --ifm-color-primary-light: #a5a9ff;
+  --ifm-color-primary-lighter: #c9cdff;
+  --ifm-color-primary-lightest: #e0e4ff;
+
+  /* Dark backgrounds */
+  --ifm-background-color: #0f0d2a; /* rgb(15 13 42) */
+  --ifm-background-surface-color: #1e1b40;
+
+  --docusaurus-highlighted-code-line-bg: rgba(128, 133, 255, 0.2);
+
+  /* Navbar dark */
+  --ifm-navbar-background-color: #1a1641; /* rgb(26 22 64) */
+
+  /* Footer dark */
+  --ifm-footer-background-color: #0a0820;
+}
+
+/* Custom scrollbar matching landing page */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(249 250 251);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(156 163 175);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(107 114 128);
+}
+
+/* Dark mode scrollbar */
+[data-theme='dark'] ::-webkit-scrollbar-track {
+  background: rgb(17 24 39);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: rgb(75 85 99);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: rgb(107 114 128);
+}
+
+/* Smooth focus styles */
+.focus-visible:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 2px var(--ifm-color-primary), 0 0 0 4px rgba(93, 99, 255, 0.2) !important;
+}
+
+/* Custom button styles */
+.button--primary {
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-dark) 100%);
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.button--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(93, 99, 255, 0.3);
+}
+
+/* Navbar enhancements */
+.navbar {
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.1);
+}
+
+.navbar__title {
+  font-weight: 600;
+}
+
+/* Hero section styling */
+.hero {
+  background: linear-gradient(135deg, #f0f2ff 0%, #e5e7ff 100%);
+}
+
+[data-theme='dark'] .hero {
+  background: linear-gradient(135deg, var(--ifm-background-color) 0%, #1e1b40 100%);
+}
+
+/* Code block enhancements */
+.prism-code {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Table of contents */
+.table-of-contents {
+  border-left: 2px solid var(--ifm-color-primary);
+  padding-left: 1rem;
+}
+
+/* Footer styling */
+.footer {
+  background: var(--ifm-footer-background-color);
+  color: var(--ifm-footer-color);
+}
+
+.footer__title {
+  color: var(--ifm-footer-title-color);
+  font-weight: 600;
+}
+
+.footer__link-item {
+  color: var(--ifm-footer-link-color);
+  transition: color 0.2s ease;
+}
+
+.footer__link-item:hover {
+  color: var(--ifm-color-primary-lighter);
+}
+
+/* Custom Logo styling to match landing page */
+.navbar__brand {
+  display: flex !important;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--ifm-navbar-link-color) !important;
+  text-decoration: none !important;
+}
+
+.navbar__brand:hover {
+  color: var(--ifm-navbar-link-color) !important;
+  text-decoration: none !important;
+}
+
+/* Logo icon */
+.navbar__logo {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: linear-gradient(135deg, var(--ifm-color-primary-dark) 0%, var(--ifm-color-secondary) 100%);
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: white;
+  font-size: 1.125rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin: 0 !important;
+}
+
+/* Dark mode adjustments */
+[data-theme='dark'] .navbar__logo {
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-secondary) 100%);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .navbar__brand {
+    font-size: 1.125rem;
+  }
+
+  .navbar__logo {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+  }
+}
+
+/* API Reference page custom styling */
+.redocusaurus h1 {
+  color: var(--ifm-color-primary) !important;
+}
+
+/* Enhanced spacing and layout */
+.main-wrapper {
+  max-width: none;
+}
+
+.container {
+  max-width: 1400px;
+}
+
+/* Improved documentation content styling */
+.markdown h1, .markdown h2, .markdown h3 {
+  color: var(--ifm-heading-color);
+  border-bottom: 2px solid var(--ifm-color-primary);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.markdown h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.markdown h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+/* Link styling */
+.markdown a {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.markdown a:hover {
+  color: var(--ifm-color-primary-dark);
+  border-bottom-color: var(--ifm-color-primary);
+}
+
+/* Card-like styling for content sections */
+.markdown .admonition {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid var(--ifm-color-primary);
+}
+
+/* Sidebar enhancements */
+.menu__link {
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.menu__link:hover {
+  background-color: var(--ifm-color-primary);
+  color: white;
+}
+
+.menu__link--active {
+  background-color: var(--ifm-color-primary);
+  color: white;
+  font-weight: 600;
 }

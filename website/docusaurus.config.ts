@@ -15,10 +15,9 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://jurono.github.io',
+  url: 'https://docs.jurono.eu',
   // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/api-docs/',
+  baseUrl: '/api/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -57,12 +56,12 @@ const config: Config = {
       {
         specs: [
           {
-            spec: 'static/openapi.yaml',
-            route: '/api/',
+            spec: 'https://api.jurono.eu/api/docs-json',
+            route: '/api/reference/',
           },
         ],
         theme: {
-          primaryColor: '#1890ff',
+          primaryColor: '#5d63ff', // Matching Jurono brand primary color
         },
       },
     ],
@@ -76,6 +75,8 @@ const config: Config = {
       logo: {
         alt: 'Jurono Logo',
         src: 'img/logo.svg',
+        width: 40,
+        height: 40,
       },
       items: [
         {
@@ -85,12 +86,12 @@ const config: Config = {
           label: 'Documentation',
         },
         {
-          to: '/api/',
+          to: '/api/reference/',
           label: 'API Reference',
           position: 'left',
         },
         {
-          href: '/api-docs/openapi.yaml',
+          href: 'https://api.jurono.eu/api/docs-json',
           label: 'OpenAPI Spec',
           position: 'left',
           target: '_blank',
@@ -114,7 +115,7 @@ const config: Config = {
             },
             {
               label: 'API Reference',
-              to: '/api/',
+              to: '/api/reference/',
             },
             {
               label: 'Code Examples',
@@ -127,12 +128,12 @@ const config: Config = {
           items: [
             {
               label: 'OpenAPI Specification',
-              href: '/api-docs/openapi.yaml',
+              href: 'https://api.jurono.eu/api/docs-json',
               target: '_blank',
             },
             {
               label: 'Postman Collection',
-              href: '/api-docs/postman/Jurono.postman_collection.json',
+              href: '/api/postman/Jurono.postman_collection.json',
               target: '_blank',
             },
           ],

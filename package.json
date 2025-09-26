@@ -4,9 +4,7 @@
   "private": true,
   "description": "Public API documentation for Jurono Legal Practice Management Platform",
   "scripts": {
-    "sync": "scripts/sync-from-api.sh",
-    "sync:check": "scripts/sync-from-api.sh && npm run validate",
-    "validate": "spectral lint openapi/openapi.yaml",
+    "validate:live": "spectral lint https://api.jurono.eu/api/docs-json",
     "validate:install": "npm install -g @stoplight/spectral-cli",
     "docs:dev": "cd website && npm start",
     "docs:build": "cd website && npm run build",

@@ -4,7 +4,6 @@ on:
   push:
     branches: [ main ]
     paths:
-      - "openapi/**"
       - "guides/**"
       - "webhooks/**"
       - "website/**"
@@ -12,27 +11,43 @@ on:
       - ".github/workflows/build-docs.yml"
 permissions:
   contents: read
-  pages: write
-  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
-        with: 
+        with:
           node-version: "20"
-      - run: cd website && npm ci && npm run build
-      - uses: actions/upload-pages-artifact@v4
-        with: 
+      - name: Install dependencies and build
+        run: cd website && npm ci && npm run build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-site
           path: website/build
+
+  # TODO: Add deployment step for docs.jurono.eu/api
+  # This will depend on your hosting setup (CapRover, CDN, etc.)
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    if: github.ref == 'refs/heads/main'
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docs-site
+          path: build
+      - name: Deploy to docs.jurono.eu
+        run: |
+          echo "🚀 Ready to deploy to docs.jurono.eu/api"
+          echo "Build artifact contains:"
+          ls -la build/
+          # TODO: Add actual deployment commands here
+          # Example for CapRover:
+          # npx caprover deploy --caproverUrl ${{ secrets.CAPROVER_URL }} --appToken ${{ secrets.DOCS_APP_TOKEN }} --appName jurono-docs --imageName jurono-docs:${GITHUB_SHA}
+          #
+          # Example for SCP/RSYNC:
+          # rsync -avz --delete build/ user@docs.jurono.eu:/var/www/api/
